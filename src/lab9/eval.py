@@ -132,11 +132,8 @@ def aggregate(rows: list[dict[str, Any]], metric_ids: list[str], k_values: list[
             if not by_item or min(len(v) for v in by_item.values()) < k:
                 out[f"{name}_{k}"] = None            # undefined with fewer than k runs per item
                 continue
-            try:
-                est = [fn(len(v), sum(v), k) for v in by_item.values()]
-                out[f"{name}_{k}"] = round(sum(est) / len(est), 4) if est else None
-            except NotImplementedError:
-                out[f"{name}_{k}"] = None
+            est = [fn(len(v), sum(v), k) for v in by_item.values()]
+            out[f"{name}_{k}"] = round(sum(est) / len(est), 4) if est else None
     passes = sum(bool(r.get("pass_rate")) for r in rows)
     out["cost_per_success"] = round(sum(r["cost"] for r in rows) / passes, 4) if passes else None
     return out
